@@ -1,9 +1,14 @@
 const mongoose = require("mongoose");
 
 const TodoSchema = mongoose.Schema({
-    todos: {
+    todo: {
         type: String,
         required: true
+    },
+    completed: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 })
 
