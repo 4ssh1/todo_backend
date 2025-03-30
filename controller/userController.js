@@ -48,23 +48,25 @@ const logInUser = async (req, res) => {
 
     const token = generateToken(user._id, email)
 
-    res.status(201).cookie('token', token, {
+    res.cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        maxAge: 24 * 60 * 60 * 1000
-    }).json({
+        expiresIn: 24 * 60 * 60 * 1000
+    }).status(201).json({
         status: "Successful",
         message: "User logged in successfully",
         token,
         user: user._id
     })
+    console.log(req.cookies.token, token)
+
 }
 
 const logOutUser =  (req, res) => {
    // const _token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZTgzZmI2YWIwYWNjMjQ4ZTI3YmNhNiIsImVtYWlsIjoiYW5pbXRAZ21haWwuY29tIiwiaWF0IjoxNzQzMjgzNjc3LCJleHAiOjE3NDMzNzAwNzd9.mf7XRb7QgRUYfq0e3aRCpPe9B9tIbb_2YQOxuyIlYDk";
     
     const _token = req.cookies.token   //the commented code above works but for some reason, this function isn't collecting the cookie
-
+    console.log(req.cookies.token)
     if (!_token ) {
         return res.status(401).json({ message: "No token" });
     }
