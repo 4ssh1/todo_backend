@@ -3,7 +3,9 @@ const User = require('../model/userModel')
 const protect = async(req, res, next)=>{
     const token = req.cookies.token;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id).select(-password)  //what does this do ?
+    const user = await User.findById(decoded.id).select(-password)  
+    //use .select("-field1 -field2") to omit multiple fields.
+    //use .select("field1 field2") to include only specific fields.
 
     if(!token) return res.status(404).json({
         status: "Error",
