@@ -1,13 +1,14 @@
 const User = require('../model/userModel');
-const bcrypt = require('bcrypt')
+const generateToken = require('../middleware/generateToken')
+const jwt = require('jsonwebtoken')
 
-const signInUser = async (req, res, next) => {
-    const {name, email, password, createdAt} = req.body;
+const signInUser = async (req, res) => {
+    const {name, email, password} = req.body;
 
     const user = new User({
         name,
         email,
-        password,
+        password
     })
 
     const _user = await user.save()
@@ -24,21 +25,20 @@ const signInUser = async (req, res, next) => {
         message: "User signed in successfully"
     })
 
-    next()
 }
 
-const logInUser = async (req, res, next) => {
+const logInUser = async (req, res) => {
     const {email, password} = req.body;
     const user = await User.findOne({email})
-    const passwordCheck = await user.isValidPassword(password)
-
+    
     if(!user){
         return res.status(404).json({
             status: "Error",
             message: "User not found"
         })
     }
-
+    const passwordCheck = await user.isValidPassword(password)
+    
     if(!passwordCheck){
         return res.status(404).json({
             status: "Error",
@@ -46,11 +46,42 @@ const logInUser = async (req, res, next) => {
         })
     }
 
-    res.status(201).json({
+    const token = generateToken(user._id, email)
+
+    res.status(201).cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 24 * 60 * 60 * 1000
+    }).json({
         status: "Successful",
-        message: "User logged in successfully"
+        message: "User logged in successfully",
+        token,
+        user: user._id
     })
-    next()
 }
 
-module.exports = {signInUser, logInUser}
+const logOutUser =  (req, res) => {
+   // const _token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZTgzZmI2YWIwYWNjMjQ4ZTI3YmNhNiIsImVtYWlsIjoiYW5pbXRAZ21haWwuY29tIiwiaWF0IjoxNzQzMjgzNjc3LCJleHAiOjE3NDMzNzAwNzd9.mf7XRb7QgRUYfq0e3aRCpPe9B9tIbb_2YQOxuyIlYDk";
+    
+    const _token = req.cookies.token   //the commented code above works but for some reason, this function isn't collecting the cookie
+
+    if (!_token ) {
+        return res.status(401).json({ message: "No token" });
+    }
+
+    const decoded =  jwt.verify(_token, process.env.JWT_SECRET);
+    if(!decoded) return res.status(401).json({ message: "No user is logged in" });
+
+
+    console.log(`User ${decoded.id} is logging out`); 
+    res.clearCookie("token", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict" });
+
+    res.json({
+        status: "successful",
+        message: `User ${decoded.id} logged out successfully`    
+        
+    })
+    
+}
+
+module.exports = {signInUser, logInUser, logOutUser}

@@ -1,6 +1,6 @@
-const Todo = require("./model/todoModel")
+const Todo = require("../model/todoModel")
 
-const newTodo = async(req, res, next)=>{
+const newTodo = async(req, res)=>{
     const {todo, completed} = req.body;
     const _todo = await Todo.create({
         todo,
@@ -16,20 +16,25 @@ const newTodo = async(req, res, next)=>{
 
     res.status(201).json({
         status: "successful",
-        message: "Todo was created successfully",
-        _todo
+        message: "Todo was created successfully"
     })
-    next()
 }
 
-const getTodo = async (req, res, next) => {
-    const {id} = req.params; //make a user id with mongoose
-    const _todo = await Todo.findById(id)
-
-    if(!id || !_todo){
+const getTodo = async (req, res) => {
+    const {id} = req.params; 
+    
+    if(!id){
         return res.status(404).json({
             status: "error",
-            message: "Todo not found"
+            message: "Id not found"
+        })
+    }
+    const _todo = await Todo.findById(id)
+
+    if(!_todo){
+        return res.status(404).json({
+            status: "error",
+            message: "Todo not found",
         })
     }
     
@@ -38,14 +43,13 @@ const getTodo = async (req, res, next) => {
         message: "Todo found successfully",
         _todo
     })
-    next()
 }
 
-const updateTodo = async (req, res, next) => {
+const updateTodo = async (req, res) => {
     const {id} = req.params;
     const {todo} = req.body;
 
-    const _todo = await Todo.findByIdAndUpdate(id, todo, {new: true})
+    const _todo = await Todo.findByIdAndUpdate(id, {todo}, {new: true, runValidators: true})
 
     if(!id || !todo || !_todo){
         return res.status(404).json({
@@ -57,18 +61,23 @@ const updateTodo = async (req, res, next) => {
     res.status(201).json({
         status: "Successful",
         message: "Todo updated successfully",
-        _todo
+        todo
     })
-    next()
 }
 
-const deleteTodo = async (req, res, next) => {
+const deleteTodo = async (req, res) => {
     const {id} = req.params;
-    const {todo} = req.body;
 
-    const _todo = Todo.findByIdAndDelete(id)
+    
+    if(!id){
+        return res.status(404).json({
+            status: "error",
+            message: "Todo not deleted successfully"
+        })
+    }
+    const _todo = await Todo.findByIdAndDelete(id)
 
-    if(!id || !todo || !_todo){
+    if(!_todo){
         return res.status(404).json({
             status: "error",
             message: "Todo not deleted successfully"
@@ -79,7 +88,6 @@ const deleteTodo = async (req, res, next) => {
         status: "Successful",
         message: "Todo deleted successfully"
     })
-    next()
 }
 
 module.exports = {newTodo, getTodo, updateTodo, deleteTodo}
