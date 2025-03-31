@@ -20,11 +20,18 @@ const signInUser = async (req, res) => {
         })
     }
 
-    res.status(201).json({
-        status: "Successful",
-        message: "User signed in successfully"
-    })
+    const token = generateToken(user._id, email)
 
+    res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        expiresIn: 24 * 60 * 60 * 1000,
+    }).status(201).json({
+        status: "Successful",
+        message: "User signed in successfully",
+        token,
+        user: user._id
+    })
 }
 
 const logInUser = async (req, res) => {
@@ -47,7 +54,6 @@ const logInUser = async (req, res) => {
     }
 
     const token = generateToken(user._id, email)
-
     res.cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -60,6 +66,8 @@ const logInUser = async (req, res) => {
         token,
         user: user._id
     })
+
+    
 
 }
 
@@ -75,10 +83,10 @@ const logOutUser =  (req, res) => {
     if(!decoded) return res.status(401).json({ message: "No user is logged in" });
 
     console.log(`User ${decoded.id} is logging out`); 
-    
+
     res.clearCookie("token", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict" });
 
-    res.json({
+    res.status(201).json({
         status: "successful",
         message: `User ${decoded.id} logged out successfully`    
         
