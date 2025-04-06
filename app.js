@@ -22,6 +22,14 @@ app.use(cors({
     origin: "https://todo-list-hgia.vercel.app",
     credentials: true
 }));
+
+// Handle preflight requests for all routes
+
+app.options("*", cors({
+    origin: "https://todo-list-hgia.vercel.app",
+    credentials: true
+  }));
+  
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use('/todo', todoRouter)
