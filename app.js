@@ -19,7 +19,7 @@ mongoose.connect(process.env.DATABASE)
         .catch((err)=>console.log("DB error: ", err))
 
 app.use(cors({
-    origin: [`http://localhost:${PORT}`],
+    origin: "https://todo-list-hgia.vercel.app",
     credentials: true
 }));
 app.use(express.json());

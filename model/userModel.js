@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const UserSchema = mongoose.Schema({
     name:{
         type: String,
-        required: true,   //reauired: [true, "name is required"] the later is thrown if its false
+        required: true,   //required: [true, "name is required"] the later is thrown if its false
         unique: true,
         trim: true,
         validate:{
