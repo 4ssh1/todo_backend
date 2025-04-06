@@ -27,12 +27,16 @@ app.use(express.urlencoded({extended: true}));
 app.use('/todo', todoRouter)
 app.use('/user', userRouter)
 
+app.get("/", (req, res) => {
+    res.send("Server is up and running ");
+});
 app.get("/quotes", (req,res)=>{
     res.status(200).json({
         quote: quoteFunc()
     })
 })
 
+  
 
 
 app.listen(PORT, ()=>{
