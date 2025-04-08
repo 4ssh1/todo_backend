@@ -19,8 +19,11 @@ mongoose.connect(process.env.DATABASE)
 
 app.use(cors({
     origin: "https://todo-list-hgia.vercel.app",
-    credentials: true
+    credentials: true,
+    methods: 'GET, POST, PUT, DELETE', // Allow these HTTP methods
+    allowedHeaders: 'Content-Type, Authorization'
 }));
+
 
 app.use(cookie())
 
