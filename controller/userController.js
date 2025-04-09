@@ -66,10 +66,20 @@ const logInUser = async (req, res) => {
         token,
         user: user._id
     })
+}
 
-    
+const getProfile = (req, res)=>{
+    try {
+        const { name, email } = req.user;
+        return res.json({ user: { name, email } });
+        
+    } catch (error) {
+        console.log(error.message)
+    }
+   
 
 }
+
 
 const logOutUser =  (req, res) => {
     
@@ -94,4 +104,6 @@ const logOutUser =  (req, res) => {
     
 }
 
-module.exports = {signInUser, logInUser, logOutUser}
+
+
+module.exports = {signInUser, logInUser, logOutUser, getProfile}
