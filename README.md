@@ -40,7 +40,7 @@ To get started, follow these steps:
    ```
 
 
-# Nodemailer Uploads Project Structure
+# Todo Backend Project Structure
 
 ```text
 todo_backend/
