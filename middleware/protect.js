@@ -1,4 +1,5 @@
 const User = require('../model/userModel')
+const jwt = require('jsonwebtoken')
 
 const protect = async(req, res, next)=>{
     const token = req.cookies.token;
@@ -17,7 +18,7 @@ const protect = async(req, res, next)=>{
         message: "User not found"
     })
 
-    res.json({
+    return  res.status(200).json({
         status: "successful",
         message: "Authorized",
         user

@@ -13,7 +13,7 @@ const signInUser = async (req, res) => {
 
     const _user = await user.save()
 
-    if(!user || !_user){
+    if(!_user){
         return res.status(500).json({
             status: "Error",
             message: "User not registered"
@@ -22,7 +22,7 @@ const signInUser = async (req, res) => {
 
     const token = generateToken(user._id, email)
 
-    res.cookie('token', token, {
+    return res.cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         expiresIn: 24 * 60 * 60 * 1000,
@@ -54,7 +54,7 @@ const logInUser = async (req, res) => {
     }
 
     const token = generateToken(user._id, email)
-    res.cookie('token', token, {
+    return res.cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         expiresIn: 24 * 60 * 60 * 1000,
@@ -96,7 +96,7 @@ const logOutUser =  (req, res) => {
 
     res.clearCookie("token", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict" });
 
-    res.status(201).json({
+    return res.status(201).json({
         status: "successful",
         message: `User ${decoded.id} logged out successfully`    
         

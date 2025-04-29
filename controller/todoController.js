@@ -14,7 +14,7 @@ const newTodo = async(req, res)=>{
         })
     }
 
-    res.status(201).json({
+    return res.status(201).json({
         status: "successful",
         message: "Todo was created successfully"
     })
@@ -38,7 +38,7 @@ const getTodo = async (req, res) => {
         })
     }
     
-    res.status(201).json({
+    return res.status(201).json({
         status: "Successful",
         message: "Todo found successfully",
         _todo
@@ -58,7 +58,7 @@ const updateTodo = async (req, res) => {
         })
     }
 
-    res.status(201).json({
+    return res.status(201).json({
         status: "Successful",
         message: "Todo updated successfully",
         todo
@@ -84,7 +84,7 @@ const deleteTodo = async (req, res) => {
         })
     }
 
-    res.status(200).json({
+    return res.status(200).json({
         status: "Successful",
         message: "Todo deleted successfully"
     })
